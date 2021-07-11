@@ -1,40 +1,48 @@
-import React, { useReducer } from 'react'
+import React, { useEffect, useReducer } from 'react'
 import { toDoReducer } from './toDoReducer'
-import { useForm } from '../../hooks/useForm';
+import { TodoList } from './TodoList';
+import { TodoAdd } from './TodoAdd';
 
 import './styles.css'
 
-const initialState = [{
-    id: new Date().getTime(),
-    desc: 'Aprender React',
-    done: false
-}];
+const init = () => {
+    return JSON.parse(localStorage.getItem('ToDos')) || [];
+}
 
 export const ToDoApp = () => {
 
-    const [toDos, dispatch] = useReducer(toDoReducer, initialState)
+    const [toDos, dispatch] = useReducer(toDoReducer, [], init);
 
-    const [{description}, handleInputChange] = useForm({
-        description: ''
-    });
+    useEffect(() => {
+        localStorage.setItem('ToDos', JSON.stringify( toDos ));
+    }, [toDos]);
 
-    console.log(description);
+    const handleDelete = ( toDoId ) => {
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
-        const newToDo = {
-            id: new Date().getTime(),
-            desc: 'Nueva Tarea',
-            done: false
+        const actionDeleteToDo = {
+            type: 'delete',
+            payload: toDoId
         };
 
-        const actionAddToDo = {
+        dispatch(actionDeleteToDo);
+    }
+
+    const handleToggle = (toDoId) =>{
+
+        dispatch({
+            type: 'toggle',
+            payload: toDoId
+        })
+
+    }
+
+    const handleAddToDo = (newToDo) => {
+
+        dispatch({
             type: 'add',
             payload: newToDo
-        }
+        });
 
-        dispatch(actionAddToDo);
     }
 
     return (
@@ -45,46 +53,18 @@ export const ToDoApp = () => {
             <div className="row">
 
                 <div className="col-6">
-
-                <ul className="list-group list-group-flush">
-                    {
-                        toDos.map( (toDo, i) => (
-                            <li 
-                                key={toDo.id}
-                                className="list-group-item"    
-                            > 
-                                    <p> { i + 1 }. {toDo.desc} </p>
-                                    <button className="btn btn-danger">Borrar Tarea</button>
-                            </li>
-                        ))
-                    }
-                </ul>
-
+                    <TodoList  
+                        toDos={toDos}
+                        handleDelete={ handleDelete }
+                        handleToggle={ handleToggle }
+                    />
                 </div>
 
                 <div className="col-6">
 
-                    <h4>Agregar ToDo</h4>
-                    <hr />
-
-                    <form onSubmit={ handleSubmit } >
-
-                        <input 
-                            type="text"
-                            className="form-control"
-                            name="description"
-                            autoComplete="off"
-                            onChange={ handleInputChange }
-                        />
-
-                        <button
-                            type="submit"
-                            className="btn btn-outline-primary mt-1 w-100"
-                        >
-                            Agregar
-                        </button>
-
-                    </form>
+                    <TodoAdd
+                        handleAddToDo={ handleAddToDo }
+                    />
 
                 </div>
 
