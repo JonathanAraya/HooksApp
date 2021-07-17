@@ -14,9 +14,10 @@ import ReactDOM from 'react-dom';
 // import { CounterApp } from './components/01-useState/CounterApp';
 // import { HookApp } from './HookApp';
 // import { CounterWithCustomHook } from './components/01-useState/CounterWithCustomHook';
-import { ToDoApp } from './components/08-useReducer/ToDoApp';
+// import { ToDoApp } from './components/08-useReducer/ToDoApp';
+import { MainApp } from './components/09-useContext/MainApp';
 
 ReactDOM.render(
-    <ToDoApp />,
+    <MainApp />,
   document.getElementById('root')
 );
